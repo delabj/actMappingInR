@@ -431,3 +431,68 @@ dfACT %>%
          scoreEW
          ) -> dfScores
 summary(dfScores)
+
+
+
+
+#### this reads the fixed width file into R
+ReadACT<- function(filePath = "fileName", year="19-20"){
+  df <- GetMapping(year)
+  if(!is.data.frame(df)){
+    stop("Given Mapping isn't a dataframe. Have you entered the year correctly?")
+    }
+  read.fwf(file=filePath,
+           widths = df$widthsACT,
+           col.names = df$namesACT)
+}
+
+
+## Flexable Mapping. So far this is only 19-20
+GetMapping <- function(year="18-19"){
+  switch(year,
+         "18-19"= return("Old Mapping"), #placeholder
+         "19-20"= return(actMap19_20),  #sep2019-aug2020
+         stop('No Map found, Have you entered the year correctly?') #error catching
+         )
+  return(NULL)
+}
+
+
+## this gets the comment for a given code
+GetComment <- function(commentCode="--"){
+
+  ## if the code is -- there is no comment
+  if(commentCode=="--"){
+    return("NA")
+  }
+  ## if the comment codes need to be between 01 and 99 if this isn't the case something is wrong
+  else if(!(as.numeric(commentCode)%in%c(1:99))){
+    stop('Invalid Comment Code Code values should be between 01 and 99')
+  }
+  return(paste0("test",commentCode))
+}
+
+## creates a string of comments based on the comment field
+TranslateComment <- function(comment="--------"){
+  if(comment=="--------"){
+    "No Essay Comments"
+  }
+  else{
+    comments <- ""
+    for(i in 1:4){
+      stop <- i*2
+      start <-  stop-1
+      comments <- paste(comments, GetComment(substr(comment, start, stop)))
+    }
+    return(comments)
+  }
+}
+
+## transform column of comment codes into comments
+## THIS IS DPLYR COMPATABLE! :):):)
+FindComments <- function(.data, ...){
+  .data$commentText <- lapply(.data$essayComments, TranslateComment)
+  return(.data)
+}
+
+
