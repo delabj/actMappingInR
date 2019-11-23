@@ -495,4 +495,22 @@ FindComments <- function(.data, ...){
   return(.data)
 }
 
+## UTCI
+# 0:Below Proficent, 1:Proficent,  2:Above Proficent, -: unable to caluclate
+GetUTCI <- function(textUTCI="-"){
+  switch(as.character(textUTCI),
+         "0" = return("Below Proficent"),
+         "1" = return("Proficent"),
+         "2" = return("Above Proficent"),
+         "-" = return("Unable to calculate"),
+         stop('Invalid UTCI code') #error catching
+  )
+}
+
+#Tranforms the column of  UTCI into text
+FindUTCI <- function(.data, ...){
+  .data$UTCIText <- lapply(test2$UCTI, GetUTCI)
+  return(.data)
+}
+
 
