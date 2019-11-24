@@ -514,3 +514,24 @@ FindUTCI <- function(.data, ...){
 }
 
 
+
+## PTCRI
+# 0:Below Proficent, 1:Proficent,  2:Above Proficent, -: unable to caluclate
+GetPTCRI <- function(textPTCRI="-"){
+  switch(as.character(textPTCRI),
+         "0" = return("= Unlikely to obtain an NCRC"),
+         "1" = return("Likely to obtain a Bronze level NCRC"),
+         "2" = return("Likely to obtain a Silver level NCRC"),
+         "3" = return("Likely to obtain a Gold level NCRC"),
+         "4" = return("Likely to obtain a Platinum level NCRC"),
+         "-" = return("Unable to calculate"),
+         stop('Invalid PTCRI code') #error catching
+  )
+}
+
+#Tranforms the column of  PTCRI into text
+FindPTCRI <- function(.data, ...){
+  .data$PTCRIText <- lapply(test2$PTCRI, GetPTCRI)
+  return(.data)
+}
+
